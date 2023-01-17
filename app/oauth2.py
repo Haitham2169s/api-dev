@@ -1,5 +1,5 @@
 from jose import JWTError, jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from . import schemas, database, models
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -10,11 +10,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
 # SECRET_KEY
 # Algorithm
-# Expriation time
+# Expiration time
 
 SECRET_KEY = {settings.secret_key}
 ALGORITHM = {settings.algorithm}
-ACCESS_TOKEN_EXPIRE_MINUTES = {settings.access_token_expire_minute}
+ACCESS_TOKEN_EXPIRE_MINUTES = {settings.access_token_expire_minutes}
 
 
 def create_access_token(data: dict):
