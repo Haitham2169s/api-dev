@@ -8,7 +8,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from app.main import app
 from app.config import settings
 from app.database import get_db, Base
+from app import models
 from app.oauth2 import create_access_token
+from alembic import command
 
 # SQLALCHEMY_DATABASE_URL = "postgresql://postgres:password123@localhost:5432/fastapi_test"
 SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}_test"
@@ -28,6 +30,7 @@ def session():
     finally:
         db.close()
 
+
 @pytest.fixture()
 def client(session):
     def overrid_get_db():
@@ -39,6 +42,7 @@ def client(session):
     app.dependency_overrides[get_db] = overrid_get_db
 
     yield TestClient(app)
+
 
 @pytest.fixture
 def test_user(client):
@@ -52,9 +56,11 @@ def test_user(client):
     new_user["password"] = user_data["password"]
     return new_user
 
+
 @pytest.fixture
 def token(test_user):
     return create_access_token({"user_id": test_user["id"]})
+
 
 @pytest.fixture
 def authorized_client(client, token):
@@ -64,3 +70,35 @@ def authorized_client(client, token):
     }
 
     return client
+
+
+@pytest.fixture
+def test_post(test_user, session):
+    posts_data = [{
+        "title": "first stretching blog",
+        "content": "first content",
+        "owner_id": test_user['id']
+    }, {
+        "title": "2nd stretch blog",
+        "content": "2nd content",
+        "owner_id": test_user['id']
+    }, {
+        "title": "3rd stretch blog",
+        "content": "3rd content",
+        "owner_id": test_user['id']
+    }]
+
+    def create_post_model(post):
+        return models.Post(**post)
+
+    posts = list(map(create_post_model, posts_data))
+
+    session.add_all(posts)
+
+    # session.add_all([models.Post(title="first stretching blog", content="first content", owner_id=test_user["id"]),
+    #                  models.Post(title="2nd stretch blog", content="2nd content", owner_id=test_user["id"]),
+    #                  models.Post(title="3rd stretch blog", content="3rd content", owner_id=test_user["id"])])
+
+    session.commit()
+
+    return session.query(models.Post).all()
