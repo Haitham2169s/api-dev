@@ -1,7 +1,7 @@
 version: "3.11"
 services:
   api:
-    image: haitham2169s/fastapi
+    image: haitham314s/fastapi
     depends_on:
       - postgres
     ports:
