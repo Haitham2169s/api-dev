@@ -1,3 +1,16 @@
 # api-dev
 
 web: uvicorn app.main:app --host=0.0.0.0 --port=${PORT:-5000}
+
+ENV:
+
+```
+DATABASE_HOSTNAME=dpg-cf5s954gqg47vk6epo6g-a.oregon-postgres.render.com
+DATABASE_PORT=5432
+DATABASE_PASSWORD=jTM3vXwGZMNRsg1uBybaeXQiIeROpBLO
+DATABASE_NAME=fastapi_na53
+DATABASE_USERNAME=fastapi_na53_user
+SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+```
